@@ -14,6 +14,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"dnsresolve":                    {DecodeDnsresolve_RecordsResult},
 	"get_amm_contract_data":         {DecodeGetAmmContractDataResult},
 	"get_amm_name":                  {DecodeGetAmmNameResult},
+	"get_amm_status":                {DecodeGetAmmStatusResult},
 	"get_asset":                     {DecodeGetAsset_DedustResult},
 	"get_assets":                    {DecodeGetAssets_DedustResult},
 	"get_auction_info":              {DecodeGetAuctionInfoResult},
@@ -103,6 +104,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	85143:  {Seqno},
 	85719:  {RoyaltyParams},
 	86593:  {GetStorageContractData},
+	87635:  {GetAmmStatus},
 	87878:  {GetBalances},
 	89295:  {GetMembersRaw},
 	89352:  {GetAsset},
@@ -149,6 +151,7 @@ var resultTypes = []interface{}{
 	&Dnsresolve_RecordsResult{},
 	&GetAmmContractDataResult{},
 	&GetAmmNameResult{},
+	&GetAmmStatusResult{},
 	&GetAsset_DedustResult{},
 	&GetAssets_DedustResult{},
 	&GetAuctionInfoResult{},
@@ -333,6 +336,41 @@ func DecodeGetAmmNameResult(stack tlb.VmStack) (resultType string, resultAny any
 	var result GetAmmNameResult
 	err = stack.Unmarshal(&result)
 	return "GetAmmNameResult", result, err
+}
+
+type GetAmmStatusResult struct {
+	CloseOnly uint16
+	Paused    uint16
+	PausedAt  uint16
+}
+
+func GetAmmStatus(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 87635 for "get_amm_status" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 87635, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmStatusResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAmmStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAmmStatusResult
+	err = stack.Unmarshal(&result)
+	return "GetAmmStatusResult", result, err
 }
 
 type GetAsset_DedustResult struct {

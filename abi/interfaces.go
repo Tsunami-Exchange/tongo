@@ -319,6 +319,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetAmmName,
 	},
 	{
+		Name:     "get_amm_status",
+		InvokeFn: GetAmmStatus,
+	},
+	{
 		Name:     "get_asset",
 		InvokeFn: GetAsset,
 	},

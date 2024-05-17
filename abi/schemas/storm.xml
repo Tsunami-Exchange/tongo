@@ -16,4 +16,12 @@
             <int name="asset_id">uint16</int>
         </output>
     </get_method>
+
+    <get_method name="get_amm_status">
+        <output>
+            <int name="close_only">uint16</int>
+            <int name="paused">uint16</int>
+            <int name="paused_at">uint16</int>
+        </output>
+    </get_method>
 </abi>
