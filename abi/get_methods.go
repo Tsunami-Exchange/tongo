@@ -12,6 +12,8 @@ import (
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){
 	"dnsresolve":                    {DecodeDnsresolve_RecordsResult},
+	"get_amm_contract_data":         {DecodeGetAmmContractDataResult},
+	"get_amm_name":                  {DecodeGetAmmNameResult},
 	"get_asset":                     {DecodeGetAsset_DedustResult},
 	"get_assets":                    {DecodeGetAssets_DedustResult},
 	"get_auction_info":              {DecodeGetAuctionInfoResult},
@@ -120,6 +122,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	104122: {GetLpMiningData},
 	104346: {GetStorageParams},
 	105070: {GetTimeout},
+	105875: {GetAmmContractData},
 	106029: {GetJettonData},
 	107305: {GetLockupData},
 	107307: {GetMultisigData},
@@ -132,6 +135,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	119378: {GetDomain},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
+	122496: {GetAmmName},
 	122498: {GetTelemintAuctionState},
 	123928: {GetStakingStatus},
 	128085: {GetRouterData},
@@ -143,6 +147,8 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 
 var resultTypes = []interface{}{
 	&Dnsresolve_RecordsResult{},
+	&GetAmmContractDataResult{},
+	&GetAmmNameResult{},
 	&GetAsset_DedustResult{},
 	&GetAssets_DedustResult{},
 	&GetAuctionInfoResult{},
@@ -260,6 +266,73 @@ func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resul
 	var result Dnsresolve_RecordsResult
 	err = stack.Unmarshal(&result)
 	return "Dnsresolve_RecordsResult", result, err
+}
+
+type GetAmmContractDataResult struct {
+	AmmContractData boc.Cell
+}
+
+func GetAmmContractData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 105875 for "get_amm_contract_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 105875, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmContractDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAmmContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAmmContractDataResult
+	err = stack.Unmarshal(&result)
+	return "GetAmmContractDataResult", result, err
+}
+
+type GetAmmNameResult struct {
+	VaultAddr tlb.MsgAddress
+	AssetId   uint16
+}
+
+func GetAmmName(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 122496 for "get_amm_name" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 122496, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmNameResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAmmNameResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAmmNameResult
+	err = stack.Unmarshal(&result)
+	return "GetAmmNameResult", result, err
 }
 
 type GetAsset_DedustResult struct {

@@ -1,0 +1,19 @@
+<abi>
+    <interface name="storm_vamm">
+        <get_method name="get_amm_contract_data" version="storm"/>
+        <get_method name="get_amm_name" version="storm"/>
+    </interface>
+
+    <get_method name="get_amm_contract_data">
+        <output>
+            <cell name="amm_contract_data">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_amm_name">
+        <output>
+            <slice name="vault_addr">msgaddress</slice>
+            <int name="asset_id">uint16</int>
+        </output>
+    </get_method>
+</abi>

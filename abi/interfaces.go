@@ -41,6 +41,7 @@ const (
 	StonfiRouter
 	StorageContract
 	StorageProvider
+	StormVamm
 	SubscriptionV1
 	Teleitem
 	TonstakePool
@@ -134,6 +135,8 @@ func (c ContractInterface) String() string {
 		return "storage_contract"
 	case StorageProvider:
 		return "storage_provider"
+	case StormVamm:
+		return "storm_vamm"
 	case SubscriptionV1:
 		return "subscription_v1"
 	case Teleitem:
@@ -253,6 +256,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StorageContract
 	case "storage_provider":
 		return StorageProvider
+	case "storm_vamm":
+		return StormVamm
 	case "subscription_v1":
 		return SubscriptionV1
 	case "teleitem":
@@ -305,6 +310,14 @@ func ContractInterfaceFromString(s string) ContractInterface {
 }
 
 var methodInvocationOrder = []MethodDescription{
+	{
+		Name:     "get_amm_contract_data",
+		InvokeFn: GetAmmContractData,
+	},
+	{
+		Name:     "get_amm_name",
+		InvokeFn: GetAmmName,
+	},
 	{
 		Name:     "get_asset",
 		InvokeFn: GetAsset,
@@ -691,6 +704,13 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetStorageContractDataResult",
 			"GetTorrentHashResult",
 			"IsActiveResult",
+		},
+	},
+	{
+		Name: StormVamm,
+		Results: []string{
+			"GetAmmContractData_StormResult",
+			"GetAmmName_StormResult",
 		},
 	},
 	{
