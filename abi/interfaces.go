@@ -41,6 +41,13 @@ const (
 	StonfiRouter
 	StorageContract
 	StorageProvider
+	StormExecutor
+	StormExecutorCollection
+	StormPositionManager
+	StormReferral
+	StormReferralCollection
+	StormVamm
+	StormVault
 	SubscriptionV1
 	Teleitem
 	TonstakePool
@@ -134,6 +141,20 @@ func (c ContractInterface) String() string {
 		return "storage_contract"
 	case StorageProvider:
 		return "storage_provider"
+	case StormExecutor:
+		return "storm_executor"
+	case StormExecutorCollection:
+		return "storm_executor_collection"
+	case StormPositionManager:
+		return "storm_position_manager"
+	case StormReferral:
+		return "storm_referral"
+	case StormReferralCollection:
+		return "storm_referral_collection"
+	case StormVamm:
+		return "storm_vamm"
+	case StormVault:
+		return "storm_vault"
 	case SubscriptionV1:
 		return "subscription_v1"
 	case Teleitem:
@@ -253,6 +274,20 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StorageContract
 	case "storage_provider":
 		return StorageProvider
+	case "storm_executor":
+		return StormExecutor
+	case "storm_executor_collection":
+		return StormExecutorCollection
+	case "storm_position_manager":
+		return StormPositionManager
+	case "storm_referral":
+		return StormReferral
+	case "storm_referral_collection":
+		return StormReferralCollection
+	case "storm_vamm":
+		return StormVamm
+	case "storm_vault":
+		return StormVault
 	case "subscription_v1":
 		return SubscriptionV1
 	case "teleitem":
@@ -306,6 +341,22 @@ func ContractInterfaceFromString(s string) ContractInterface {
 
 var methodInvocationOrder = []MethodDescription{
 	{
+		Name:     "get_amm_contract_data",
+		InvokeFn: GetAmmContractData,
+	},
+	{
+		Name:     "get_amm_name",
+		InvokeFn: GetAmmName,
+	},
+	{
+		Name:     "get_amm_state",
+		InvokeFn: GetAmmState,
+	},
+	{
+		Name:     "get_amm_status",
+		InvokeFn: GetAmmStatus,
+	},
+	{
 		Name:     "get_asset",
 		InvokeFn: GetAsset,
 	},
@@ -346,6 +397,22 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetEditor,
 	},
 	{
+		Name:     "get_exchange_settings",
+		InvokeFn: GetExchangeSettings,
+	},
+	{
+		Name:     "get_executor_balances",
+		InvokeFn: GetExecutorBalances,
+	},
+	{
+		Name:     "get_executor_collection_address",
+		InvokeFn: GetExecutorCollectionAddress,
+	},
+	{
+		Name:     "get_executor_vaults_whitelist",
+		InvokeFn: GetExecutorVaultsWhitelist,
+	},
+	{
 		Name:     "get_full_domain",
 		InvokeFn: GetFullDomain,
 	},
@@ -382,6 +449,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetLpMiningData,
 	},
 	{
+		Name:     "get_lp_minter_address",
+		InvokeFn: GetLpMinterAddress,
+	},
+	{
 		Name:     "get_lp_swap_data",
 		InvokeFn: GetLpSwapData,
 	},
@@ -414,6 +485,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetNftData,
 	},
 	{
+		Name:     "get_oracle_data",
+		InvokeFn: GetOracleData,
+	},
+	{
 		Name:     "get_params",
 		InvokeFn: GetParams,
 	},
@@ -434,12 +509,28 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetPoolStatus,
 	},
 	{
+		Name:     "get_position_manager_contract_data",
+		InvokeFn: GetPositionManagerContractData,
+	},
+	{
 		Name:     "get_pow_params",
 		InvokeFn: GetPowParams,
 	},
 	{
 		Name:     "get_public_key",
 		InvokeFn: GetPublicKey,
+	},
+	{
+		Name:     "get_referral_collection_address",
+		InvokeFn: GetReferralCollectionAddress,
+	},
+	{
+		Name:     "get_referral_data",
+		InvokeFn: GetReferralData,
+	},
+	{
+		Name:     "get_referral_vaults_whitelist",
+		InvokeFn: GetReferralVaultsWhitelist,
 	},
 	{
 		Name:     "get_reserves",
@@ -456,6 +547,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_sale_data",
 		InvokeFn: GetSaleData,
+	},
+	{
+		Name:     "get_spot_price",
+		InvokeFn: GetSpotPrice,
 	},
 	{
 		Name:     "get_staking_status",
@@ -494,6 +589,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetTelemintTokenName,
 	},
 	{
+		Name:     "get_terminal_amm_price",
+		InvokeFn: GetTerminalAmmPrice,
+	},
+	{
 		Name:     "get_timeout",
 		InvokeFn: GetTimeout,
 	},
@@ -504,6 +603,26 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_validator_controller_data",
 		InvokeFn: GetValidatorControllerData,
+	},
+	{
+		Name:     "get_vamm_type",
+		InvokeFn: GetVammType,
+	},
+	{
+		Name:     "get_vault_contract_data",
+		InvokeFn: GetVaultContractData,
+	},
+	{
+		Name:     "get_vault_data",
+		InvokeFn: GetVaultData,
+	},
+	{
+		Name:     "get_vault_type",
+		InvokeFn: GetVaultType,
+	},
+	{
+		Name:     "get_vault_whitelisted_addresses",
+		InvokeFn: GetVaultWhitelistedAddresses,
 	},
 	{
 		Name:     "get_wallet_data",
@@ -691,6 +810,62 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetStorageContractDataResult",
 			"GetTorrentHashResult",
 			"IsActiveResult",
+		},
+	},
+	{
+		Name: StormVamm,
+		Results: []string{
+			"GetAmmContractData_StormResult",
+			"GetAmmName_StormResult",
+			"GetAmmStatus_StormResult",
+			"GetExchangeSettings_StormResult",
+			"GetSpotPrice_StormResult",
+			"GetTerminalAmmPrice_StormResult",
+			"GetVammType_StormResult",
+		},
+	},
+	{
+		Name: StormReferral,
+		Results: []string{
+			"GetNftDataResult",
+			"GetReferralData_StormResult",
+		},
+	},
+	{
+		Name: StormReferralCollection,
+		Results: []string{
+			"GetReferralVaultsWhitelistResult",
+		},
+	},
+	{
+		Name: StormExecutor,
+		Results: []string{
+			"GetExecutorBalancesResult",
+			"GetNftDataResult",
+		},
+	},
+	{
+		Name: StormExecutorCollection,
+		Results: []string{
+			"GetAmmName_StormResult",
+		},
+	},
+	{
+		Name: StormVault,
+		Results: []string{
+			"GetExecutorCollectionAddressResult",
+			"GetLpMinterAddressResult",
+			"GetReferralCollectionAddressResult",
+			"GetVaultContractDataResult",
+			"GetVaultDataResult",
+			"GetVaultTypeResult",
+			"GetVaultWhitelistedAddressesResult",
+		},
+	},
+	{
+		Name: StormPositionManager,
+		Results: []string{
+			"GetPositionManagerContractDataResult",
 		},
 	},
 	{
@@ -992,6 +1167,46 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		return []msgDecoderFunc{
 			decodeFuncNftTransferMsgBody,
 			decodeFuncGetStaticDataMsgBody,
+		}
+	case StormExecutor:
+		return []msgDecoderFunc{
+			decodeFuncStormMintExecutorMsgBody,
+			decodeFuncStormAddExecutorAmountMsgBody,
+			decodeFuncStormNftItemTransferMsgBody,
+			decodeFuncStormNftItemGetStaticDataMsgBody,
+		}
+	case StormPositionManager:
+		return []msgDecoderFunc{
+			decodeFuncStormTakeReferralFeesMsgBody,
+			decodeFuncStormCancelOrderMsgBody,
+			decodeFuncStormCreateOrderMsgBody,
+			decodeFuncStormCompleteOrderMsgBody,
+			decodeFuncStormActivateOrderMsgBody,
+			decodeFuncStormUpdatePositionMsgBody,
+			decodeFuncStormUpdatePositionWithStopLossMsgBody,
+			decodeFuncStormProvidePositionMsgBody,
+		}
+	case StormReferral:
+		return []msgDecoderFunc{
+			decodeFuncStormMintReferralMsgBody,
+			decodeFuncStormAddReferralAmountMsgBody,
+			decodeFuncStormNftItemTransferMsgBody,
+			decodeFuncStormNftItemGetStaticDataMsgBody,
+		}
+	case StormVamm:
+		return []msgDecoderFunc{
+			decodeFuncStormChangeSettingsMsgBody,
+			decodeFuncStormPayFundingMsgBody,
+			decodeFuncStormVammInitMsgBody,
+		}
+	case StormVault:
+		return []msgDecoderFunc{
+			decodeFuncStormVaultTradeNotificationMsgBody,
+			decodeFuncStormVaultTransferNotificationMsgBody,
+			decodeFuncStormVaultStakeMsgBody,
+			decodeFuncStormVaultUnstakeMsgBody,
+			decodeFuncStormVaultInitMsgBody,
+			decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 		}
 	case WhalesPool:
 		return []msgDecoderFunc{
